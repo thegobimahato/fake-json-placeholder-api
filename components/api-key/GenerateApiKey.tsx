@@ -73,7 +73,7 @@ export function GenerateApiKey({ onKeyGenerated }: GenerateApiKeyProps) {
   };
 
   return (
-    <div className="bg-card mx-auto w-full max-w-md rounded-xl border p-6 shadow-sm">
+    <div className="bg-card mx-auto w-full max-w-4xl rounded-xl border p-6 shadow-sm">
       <h2 className="mb-4 text-center text-lg font-semibold md:text-left">
         Generate API Key
       </h2>
