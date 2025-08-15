@@ -20,6 +20,10 @@
 # production
 /build
 
+# Ignore generated files
+app/generated/**
+
+
 # misc
 .DS_Store
 *.pem
