@@ -1,103 +1,177 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [keyName, setKeyName] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const [generatedKey, setGeneratedKey] = useState("");
+  const [apiKey, setApiKey] = useState("");
+  const [testResponse, setTestResponse] = useState("");
+
+  // generate API key
+  const generateKey = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/generate-key", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: keyName || undefined }),
+      });
+
+      const result = await response.json();
+      console.log(result);
+
+      if (result.success) {
+        setGeneratedKey(result.data.apiKey);
+        setApiKey(result.data.apiKey);
+      } else {
+        toast.success(result.error);
+      }
+    } catch (error) {
+      toast.error("Failed to generate API Key");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // test API endpoint
+  const testApi = async (endpoint: string) => {
+    if (!apiKey) return;
+
+    try {
+      const response = await fetch(`/api/test-api/${endpoint}`, {
+        headers: { "x-api-key": apiKey },
+      });
+
+      const result = await response.json();
+      setTestResponse(JSON.stringify(result, null, 2));
+    } catch {
+      setTestResponse("Failed to test API");
+    }
+  };
+
+  return (
+    <div className="bg-background relative min-h-screen py-8">
+      {/* theme toggle */}
+      <div className="absolute top-3 right-3">
+        <ThemeToggle />
+      </div>
+
+      <div className="mx-auto max-w-4xl px-4">
+        {/* header */}
+        <div className="mb-8 text-center">
+          <h1 className="mb-4 text-3xl font-bold">Free Fake API Services</h1>
+          <p className="text-muted-foreground">
+            A free and ready-to-use fake JSON API for testing and prototyping
+            your applications.
+          </p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+
+        {/* generate API key */}
+        <div className="mb-6 rounded-lg p-6 shadow">
+          <h2 className="mb-4 text-xl font-semibold">Generate API Key</h2>
+          <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+            <Input
+              type="text"
+              placeholder="Key name (optional)"
+              value={keyName}
+              onChange={(e) => setKeyName(e.target.value)}
+            />
+            <Button onClick={generateKey} disabled={isLoading}>
+              {isLoading ? "Generating..." : "Generate Key"}
+            </Button>
+          </div>
+
+          {generatedKey && (
+            <div className="rounded border bg-green-50 p-4 dark:bg-neutral-900">
+              <p className="mb-2 text-green-800">
+                Your API Key (Unlimited requests):
+              </p>
+              <code className="break-all text-green-700">{generatedKey}</code>
+            </div>
+          )}
+        </div>
+
+        {/* API key input */}
+        <div className="mb-6 rounded-lg p-6 shadow">
+          <h2 className="mb-4 text-xl font-semibold">Test with API Key</h2>
+          <Input
+            type="text"
+            placeholder="Enter your API Key"
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        </div>
+
+        {/* test endpoints */}
+        <div className="mb-6 rounded-lg p-6 shadow">
+          <h2 className="mb-4 text-xl font-semibold">Test Endpoints</h2>
+          <div className="mb-4 grid grid-cols-1 gap-2 md:grid-cols-2">
+            <Button
+              onClick={() => testApi("users")}
+              disabled={!apiKey}
+              variant="secondary"
+            >
+              Get All Users
+            </Button>
+            <Button
+              onClick={() => testApi("user?id=1")}
+              disabled={!apiKey}
+              variant="secondary"
+            >
+              Get Single User
+            </Button>
+          </div>
+
+          {testResponse && (
+            <div className="rounded border p-3">
+              <pre className="max-h-96 overflow-auto text-xs">
+                {testResponse}
+              </pre>
+            </div>
+          )}
+        </div>
+
+        {/* API documentation */}
+        <div className="rounded-lg bg-white p-6 shadow dark:bg-neutral-900">
+          <h2 className="mb-4 text-xl font-semibold">API Documentation</h2>
+          <div className="space-y-6 text-sm">
+            <div>
+              <h3 className="text-foreground font-medium">Base URL:</h3>
+              <code className="text-primary">
+                {process.env.NEXT_PUBLIC_BASE_URL}/api/test-api/
+              </code>
+            </div>
+
+            <div>
+              <h3 className="text-foreground font-medium">Headers:</h3>
+              <code className="text-primary">x-api-key: your_api_key_here</code>
+            </div>
+
+            <div>
+              <h3 className="text-foreground font-medium">
+                Available Endpoints:
+              </h3>
+              <ul className="text-muted-foreground list-inside list-disc space-y-1">
+                <li>
+                  <code>/users</code> - Get list of 50 fake users with detailed
+                  information
+                </li>
+                <li>
+                  <code>/user?id=1</code> - Get single user by ID (1-50)
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
