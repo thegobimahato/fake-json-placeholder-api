@@ -7,6 +7,7 @@ import { GenerateApiKey } from "@/components/api-key/GenerateApiKey";
 import { ApiKeyInput } from "@/components/api-key/ApiKeyInput";
 import { TestEndpoints } from "@/components/test-endpoints/TestEndpoints";
 import { ApiDocumentation } from "@/components/documentation/ApiDocumentation";
+import HeroSection from "@/components/ui/hero-section";
 
 export default function Home() {
   const [apiKey, setApiKey] = useState("");
@@ -26,14 +27,8 @@ export default function Home() {
 
       <div className="mx-auto max-w-4xl space-y-8 px-4">
         {/* Header */}
-        <div className="text-center">
-          <h1 className="mb-2 text-4xl font-bold tracking-tight">
-            Free Fake API Services
-          </h1>
-          <p className="text-muted-foreground mx-auto max-w-sm">
-            A free and ready-to-use fake JSON API for testing and prototyping
-            your applications.
-          </p>
+        <div className="py-8 text-center">
+          <HeroSection />
         </div>
 
         <GenerateApiKey onKeyGenerated={(key) => setApiKey(key)} />

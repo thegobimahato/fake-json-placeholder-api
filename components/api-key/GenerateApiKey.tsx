@@ -100,7 +100,7 @@ export function GenerateApiKey({ onKeyGenerated }: GenerateApiKeyProps) {
       {/* Generated API Key Display */}
       {generatedKey && (
         <div className="bg-muted/30 mt-4 flex flex-col gap-2 overflow-x-auto rounded-lg border p-4">
-          <div className="flex flex-col items-start justify-between sm:flex-row sm:items-center">
+          <div className="flex flex-col items-start justify-between sm:flex-row sm:items-center border-b py-2">
             <p className="text-muted-foreground text-sm">API Name</p>
             <span className="font-medium break-words">{generatedName}</span>
           </div>

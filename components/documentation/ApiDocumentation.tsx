@@ -32,7 +32,7 @@ export const ApiDocumentation = ({ currentApiKey }: ApiDocumentationProps) => {
     setTimeout(() => setCopiedApiKey(false), 1500);
   };
 
-  const bgClass = theme === "light" ? "bg-white" : "bg-muted/50";
+  const bgClass = theme === "light" ? "bg-white" : "bg-card/40";
   const borderClass =
     theme === "light" ? "border-gray-200" : "border-neutral-800";
   const textClass = theme === "light" ? "text-gray-800" : "text-gray-200";

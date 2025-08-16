@@ -39,7 +39,7 @@ export function ResponseViewer({ response }: { response: string }) {
   }
 
   return (
-    <div className="bg-muted/30 relative mt-4 rounded-lg border p-3">
+    <div className="bg-muted/50 relative mt-4 rounded-lg border p-3">
       {/* Copy button */}
       <Button
         variant="ghost"
@@ -63,7 +63,7 @@ export function ResponseViewer({ response }: { response: string }) {
             borderRadius: "0.5rem",
             fontSize: "0.75rem",
             background: theme === "light" ? "#fafafa" : "#27272a",
-            maxHeight: "24rem",
+            maxHeight: "30rem",
             overflow: "auto",
             padding: "1rem",
             minWidth: "100%",

@@ -51,12 +51,12 @@ export function TestEndpoints({ apiKey }: { apiKey: string }) {
   const getRandomUserId = () => Math.floor(Math.random() * 50) + 1;
 
   const buttonClass = (key: keyof typeof loading) =>
-    lastClicked === key ? "bg-indigo-600 text-white" : "";
+    lastClicked === key ? "bg-primary text-white" : "";
 
   const isLoading = loading.users || loading.singleUser || loading.randomUser;
 
   return (
-    <div className="bg-card rounded-xl border p-6 shadow-sm">
+    <div className="bg-card/40 rounded-xl border p-6 shadow-sm">
       <h2 className="mb-4 text-lg font-semibold">Test Endpoints</h2>
 
       <div className="flex flex-col gap-2 md:flex-row">
